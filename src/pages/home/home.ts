@@ -1,7 +1,8 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import {LanchAlertPage } from '../lanch-alert/lanch-alert'
-import { PoubelleDataProvider } from '../providers/poubelle-data/poubelle-data';
+import { PoubelleDataProvider } from '../../providers/poubelle-data/poubelle-data';
+import {Poubelle} from "../../models/poubelle";
 declare var google: any;
 //declare var Destination: any;
 
@@ -17,6 +18,8 @@ export class HomePage {
  Location:any='';
  Destination: any='';
  address:any;
+ poubelles: Array<Poubelle> = new Array<Poubelle>();
+
  
 // start = 'lyon, l';
 // end = 'villeurbanne, vil';
@@ -26,16 +29,27 @@ export class HomePage {
  
  constructor(public navCtrl: NavController, public poubelleService: PoubelleDataProvider) {
  let that=this;
+   
+      that.poubelleService.getRemoteData()
+      .subscribe(
+      (result: any) => {
+        that.poubelles = result;
+      },
+      (error: Error) => console.log("Failed to load poubelles: " + error),
+      //() => this.loadmap()
+      );
    setTimeout(function () {
      that.showMap();
    }, 2000)
  }
 
+   
    ionViewDidLoad(){
-     this.poubelleService.getRemoteData();
-     //this.showMap();
+  
    }
    
+ 
+  
    showMap(){
      
    let that=this;
@@ -66,12 +80,14 @@ export class HomePage {
              lng: position.coords.longitude
            };
            
+           
            that.infoWindow.setPosition(pos);
            that.infoWindow.setContent('Your Location');
            that.infoWindow.open(that.map);
            that.map.setCenter(pos);
            
            that.Location= new google.maps.LatLng(pos);
+           
          // display the grabich: debut  
            var features = [
           { 
@@ -117,15 +133,30 @@ export class HomePage {
                                                     map: that.map,
                                                     animation: google.maps.Animation.DROP,
                                                  });
-         
+          
+          
+          
           marker.addListener('click', function() {
           that.Destination=marker.getPosition();
           that.calculateAndDisplayRoute();
         });
-          
+             
+             });
+           
+          that.poubelles.forEach (function(poubelle) {
+            var marker = new google.maps.Marker({
+                                                    position: new google.maps.LatLng( poubelle.latitude, poubelle.longitude),
+                                                    icon: icons.MyLocation.icon,
+                                                    map: that.map,
+                                                   // animation: google.maps.Animation.DROP,
+                                                 });
+            marker.addListener('click', function() {
+          that.Destination=marker.getPosition();
+          that.calculateAndDisplayRoute();
+        });
 
-             })
-           //fin
+            });
+           
      var geocoder=new google.maps.Geocoder();
        document.getElementById('submit').addEventListener('click', function() {
           that.geocodeAddress(geocoder,that.map);
@@ -184,6 +215,7 @@ handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
     console.log("Seconde page");
     this.navCtrl.push(LanchAlertPage);
   }
+  
   
 // Destination=new google.maps.LatLng(45.7808123636, 4.857569031311695);
  calculateAndDisplayRoute() {
