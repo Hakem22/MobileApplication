@@ -1,0 +1,25 @@
+<!--
+  Generated template for the LanchAlertPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>LanchAlert</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+<ion-content padding>
+    <button ion-button (click)="scanCode()">Scan ... </button>
+    <ion-card *ngIf="scanData">
+        <ion-card-content>
+        Result from scan: {{scanData}}
+        </ion-card-content>
+
+    </ion-card>
+</ion-content>

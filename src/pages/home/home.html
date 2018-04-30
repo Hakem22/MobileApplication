@@ -1,0 +1,20 @@
+<ion-header>
+ <ion-navbar color="danger">
+   <ion-title>
+     BellePouBelle
+   </ion-title>
+ </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+	<ion-list>
+		<ion-item >
+			<ion-label floating >tap your address</ion-label>
+			<ion-input type="text" [(ngModel)]="address" ></ion-input>
+		</ion-item >
+	</ion-list>
+	<button ion-button (click)="LanchAlert()"><ion-icon name="qr-scanner"></ion-icon> </button>
+	<button ion-button  id="submit">Adresse</button>
+ <div #map id="map"></div>
+ 
+</ion-content>
